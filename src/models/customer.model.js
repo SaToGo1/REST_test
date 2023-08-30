@@ -1,4 +1,4 @@
-// NOT UPLOADED TO GITHUB
+// auth NOT UPLOADED TO GITHUB
 let URI = require('../auth/auth');
 
 let mongoose = require('mongoose');
