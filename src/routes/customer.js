@@ -2,12 +2,19 @@ let CustomerModel = require('../models/customer.model')
 let express = require('express')
 let router = express.Router()
 
-// Create a new customer
+// CREATE REQUEST a new customer
 router.post('/customer', (req, res) => {
     // req.body -> body Parser.
     if(!req.body) {
         return res.status(400).send('Request body is missing')
     }
+
+    // if(!req.body.email) {
+    //      // ....
+    //      We could check if there is an email and send a status code (500)
+    //      If there is no email, but the mongoose model do the validation
+    //      of the email for us
+    // }
 
     // let user = {
     //     name: 'firstname lastname',
@@ -22,6 +29,59 @@ router.post('/customer', (req, res) => {
             }
 
             res.status(201).send(doc)
+        })
+        .catch(err => {
+            res.status(500).json(err)
+        })
+})
+
+// READ request
+router.get('/customer', (req, res) => {
+    if(!req.query.email) {
+        return res.status(400).send('Missing URL parameter: email')
+    }
+
+    CustomerModel.findOne({
+        email: req.query.email
+    })
+        .then(doc => {
+            res.json(doc)
+        })
+        .catch(err => {
+            res.status(500).json(err)
+        })
+})
+
+// UPDATE request
+router.put('/customer', (req, res) => {
+    if(!req.query.email) {
+        return res.status(400).send('Missing URL parameter: email')
+    }
+
+    CustomerModel.findOneAndUpdate({
+        email: req.query.email
+    }, req.body, {
+        new: true
+    })
+        .then(doc => {
+            res.json(doc)
+        })
+        .catch(err => {
+            res.status(500).json(err)
+        })
+})
+
+// DELETE request
+router.delete('/customer', (req, res) => {
+    if(!req.query.email) {
+        return res.status(400).send('Missing URL parameter: email')
+    }
+
+    CustomerModel.findOneAndDelete({
+        email: req.query.email
+    })
+        .then(doc => {
+            res.json(doc)
         })
         .catch(err => {
             res.status(500).json(err)
